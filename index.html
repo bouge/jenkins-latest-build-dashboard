@@ -1,0 +1,128 @@
+<html>
+<head>
+    <title>Jenkins Dashboard</title>
+</head>
+<body>
+<div id="Header"></div>
+<div id="jobsList"><select id="jobsSelector" onChange="setJob(this.value);">
+    <option>SELECT JOB</option>
+</select></div>
+<div id="Stages"></div>
+</body>
+<script>
+    var jobSelector = document.getElementById("jobsSelector");
+    var allJobs = {};
+    var jobsList = "/blue/rest/organizations/jenkins/pipelines/";
+    var jtitle = "";
+
+    function reqListener() {
+        var latestJob = JSON.parse(this.responseText)[0];
+        var jobID = latestJob.id;
+        var jobStatusURL = latestJob["_links"].self.href + "/nodes/?limit=10000";
+        var titleDiv = document.getElementById("Header");
+        titleDiv.innerHTML = '<h1>' + latestJob.pipeline + '</h1><br/>' + latestJob.causes[0].shortDescription;
+        bReq.open("GET", jobStatusURL);
+        bReq.send();
+    }
+
+    function updateListener() {
+        var stages = document.getElementById("Stages");
+        stages.innerHTML = '';
+        var latestRun = JSON.parse(this.responseText);
+        latestRun.forEach(function (step) {
+            var div = document.createElement("div");
+            var divBG;
+            var resultText = "";
+            switch (step.result) {
+                case "SUCCESS":
+                    divBG = "green";
+                    resultText = "SUCCESS";
+                    break;
+                case "UNKNOWN":
+                    divBG = "blue";
+                    break;
+                case "FAILURE":
+                    divBG = "red";
+                    resultText = "FAILURE";
+                    break;
+                default:
+                    divBG = "#ccc";
+
+            }
+
+            div.style.background = divBG;
+            div.style.color = "white";
+            div.innerHTML = step.displayName + " - " + resultText;
+            stages.appendChild(div);
+        });
+    }
+
+    var oReq = new XMLHttpRequest();
+    var bReq = new XMLHttpRequest();
+    var cReq = new XMLHttpRequest();
+
+    oReq.addEventListener("load", reqListener);
+    bReq.addEventListener("load", updateListener);
+    cReq.addEventListener("load", jobsListner);
+
+    function setJob(jobTitle) {
+
+        jtitle = "/blue/rest/organizations/jenkins/pipelines/" + jobTitle + "/runs/?start=0&limit=5";
+        setInterval(function () {
+            oReq.open("GET", jtitle);
+            oReq.send();
+            //setJob(jobTitle);
+        }, 2000);
+    }
+
+    cReq.open("GET", jobsList);
+    cReq.send();
+
+    function jobsListner() {
+        console.log("test");
+        allJobs = JSON.parse(this.responseText);
+        allJobs.forEach(function (job) {
+            job.pipelineFolderNames.forEach(function (jobFolder) {
+                var option = document.createElement("option");
+                option.innerHTML = job.displayName + " - " + jobFolder;
+                option.value = job.fullDisplayName + "/" + jobFolder;
+                jobSelector.appendChild(option);
+            });
+        });
+    }
+
+
+</script>
+<style>
+    #Stages div {
+        display: inline-flex;
+        margin: 20px;
+        width: 25%;
+        height: 120px;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+    }
+
+    h1 {
+        color: #fff;
+        padding: 20px;
+    }
+
+    * {
+        font-family: sans-serif;
+        background: #333;
+        color: #AAA;
+    }
+
+    select {
+        color: #fff;
+    }
+
+    #jobsList {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+</style>
+</html>
