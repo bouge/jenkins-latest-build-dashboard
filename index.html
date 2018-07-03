@@ -3,7 +3,7 @@
     <title>Jenkins Dashboard</title>
 </head>
 <body>
-<div id="Header"></div>
+<div id="Header"><br/>Jenkins Last Job Dashboard</div>
 <div id="jobsList"><select id="jobsSelector" onChange="setJob(this.value);">
     <option>SELECT JOB</option>
 </select></div>
@@ -52,7 +52,7 @@
 
             div.style.background = divBG;
             div.style.color = "white";
-            div.innerHTML = step.displayName + " - " + resultText;
+            div.innerHTML = "<h2>"+step.displayName + " <br/> " + resultText+"</h2>";
             stages.appendChild(div);
         });
     }
@@ -94,6 +94,9 @@
 
 </script>
 <style>
+    #Stages {
+        padding-left: calc(25% - 200px);
+    }
     #Stages div {
         display: inline-flex;
         margin: 20px;
@@ -101,28 +104,57 @@
         height: 120px;
         border-radius: 10px;
         padding: 10px;
-        text-align: center;
+        -webkit-box-shadow: 0px 0px 5px 1px rgba(21, 20, 20, 0.4);
+        -moz-box-shadow: 0px 0px 5px 1px rgba(21, 20, 20, 0.4);
+        box-shadow: 0px 0px 5px 1px rgba(21, 20, 20, 0.4);
+        text-align:center;
+        font-size: 25px;
     }
 
+    #Header {
+        position: relative;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #c0392b;
+        padding-bottom: 10px;
+        padding-left: 10px;
+        min-height: 40px;
+    }
     h1 {
         color: #fff;
         padding: 20px;
+        background: #e74c3c;
+        margin-left: -10px;
     }
 
+    h2 {
+        font-size: 25px;
+        width: 100%;
+        background: RGBA(0,0,0,0);
+    }
     * {
         font-family: sans-serif;
         background: #333;
-        color: #AAA;
+        color: #FFF;
+        margin: 0;
+        padding: 0;
     }
 
     select {
-        color: #fff;
+        background: #ecf0f1;
+        color: #000;
+        border: none;
     }
 
     #jobsList {
         position: absolute;
-        top: 0;
-        right: 0;
+        top: 10;
+        right: 10;
+        color: #ccc;
+        background: #ecf0f1;
+        font-size: 12px;
+        padding: 5px;
     }
 </style>
 </html>
