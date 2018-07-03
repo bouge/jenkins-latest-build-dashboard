@@ -9,3 +9,7 @@ Copy the file to: `/var/lib/jenkins/userContent/` e.g. `/var/lib/jenkins/userCon
 
 This will then be accessible from `http://my-jenkins:8080/userContent/my-dashboard.html`
 
+
+## Example
+
+![alt text](screenshot.png "Example of dashboard")
